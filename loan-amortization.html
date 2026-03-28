@@ -377,8 +377,8 @@
         </div>
         <div id="formError" class="error-msg hidden"></div>
         <div style="margin-top:1.25rem">
-            <button class="btn" onclick="calculate()">Calculate Schedule</button>
-            <button class="btn btn-secondary no-print" onclick="resetForm()">Reset</button>
+            <button class="btn" id="btnCalculate">Calculate Schedule</button>
+            <button class="btn btn-secondary no-print" id="btnReset">Reset</button>
         </div>
     </div>
 
@@ -433,7 +433,7 @@
                     <div class="input-hint">Your unit&rsquo;s proportionate share as shown on your condo declaration</div>
                 </div>
                 <div class="form-group" style="display:flex; align-items:flex-end;">
-                    <button class="btn" onclick="calculateUnitShare()" style="margin-top:0;">Estimate My Payment</button>
+                    <button class="btn" id="btnUnitCalc" style="margin-top:0;">Estimate My Payment</button>
                 </div>
             </div>
             <div id="unitResults" class="hidden" style="margin-top:1.25rem;">
@@ -465,8 +465,8 @@
             <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.5rem;">
                 <h2 style="border:none; margin:0; padding:0;">Amortization Schedule (Term Period)</h2>
                 <div class="no-print">
-                    <button class="btn print-btn" onclick="window.print()" style="margin:0">Print / Export PDF</button>
-                    <button class="btn btn-secondary" onclick="downloadCSV()" style="margin:0">Download CSV</button>
+                    <button class="btn print-btn" id="btnPrint" style="margin:0">Print / Export PDF</button>
+                    <button class="btn btn-secondary" id="btnCSV" style="margin:0">Download CSV</button>
                 </div>
             </div>
             <div class="table-wrapper" style="max-height: 600px; overflow-y: auto;">
@@ -772,6 +772,28 @@
         if (!isNaN(val) && val > 0) {
             this.value = val.toLocaleString('en-CA', { minimumFractionDigits: 0, maximumFractionDigits: 2 });
         }
+    });
+
+    // Event listeners for all buttons (more reliable on mobile than inline onclick)
+    document.getElementById('btnCalculate').addEventListener('click', function(e) {
+        e.preventDefault();
+        try { calculate(); } catch(err) { alert('Error: ' + err.message); }
+    });
+    document.getElementById('btnReset').addEventListener('click', function(e) {
+        e.preventDefault();
+        try { resetForm(); } catch(err) { alert('Error: ' + err.message); }
+    });
+    document.getElementById('btnUnitCalc').addEventListener('click', function(e) {
+        e.preventDefault();
+        try { calculateUnitShare(); } catch(err) { alert('Error: ' + err.message); }
+    });
+    document.getElementById('btnPrint').addEventListener('click', function(e) {
+        e.preventDefault();
+        window.print();
+    });
+    document.getElementById('btnCSV').addEventListener('click', function(e) {
+        e.preventDefault();
+        try { downloadCSV(); } catch(err) { alert('Error: ' + err.message); }
     });
 </script>
 
