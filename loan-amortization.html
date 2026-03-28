@@ -3,33 +3,58 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Condo Corporation Loan Amortization Calculator</title>
+    <title>Morrison Financial | Condo Corporation Loan Amortization Calculator</title>
     <style>
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
+        :root {
+            --morrison-navy: #0a1f3c;
+            --morrison-navy-light: #132d54;
+            --morrison-gold: #c5a44e;
+            --morrison-gold-light: #d4b96a;
+            --morrison-gold-pale: #f5f0e0;
+            --morrison-dark: #091729;
+            --morrison-gray: #f4f5f7;
+            --morrison-text: #1a202c;
+            --morrison-text-light: #4a5568;
+            --morrison-border: #dce1e8;
+        }
+
         body {
             font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-            background: #f0f4f8;
-            color: #1a202c;
+            background: var(--morrison-gray);
+            color: var(--morrison-text);
             line-height: 1.6;
         }
 
         header {
-            background: linear-gradient(135deg, #1e3a5f 0%, #2d5986 100%);
+            background: linear-gradient(135deg, var(--morrison-dark) 0%, var(--morrison-navy) 50%, var(--morrison-navy-light) 100%);
             color: white;
-            padding: 2rem 1rem;
+            padding: 1.75rem 1rem 1.5rem;
             text-align: center;
+            border-bottom: 4px solid var(--morrison-gold);
+        }
+
+        .header-logo {
+            font-size: 1.1rem;
+            font-weight: 700;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: var(--morrison-gold);
+            margin-bottom: 0.5rem;
         }
 
         header h1 {
-            font-size: 1.75rem;
+            font-size: 1.6rem;
             font-weight: 700;
-            margin-bottom: 0.25rem;
+            margin-bottom: 0.2rem;
+            color: white;
         }
 
         header p {
-            font-size: 0.95rem;
-            opacity: 0.85;
+            font-size: 0.9rem;
+            opacity: 0.7;
+            color: #ccc;
         }
 
         .container {
@@ -40,18 +65,19 @@
 
         .card {
             background: white;
-            border-radius: 12px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(10,31,60,0.08);
             padding: 1.5rem 2rem;
             margin-bottom: 1.5rem;
+            border-top: 3px solid var(--morrison-gold);
         }
 
         .card h2 {
-            font-size: 1.2rem;
-            color: #1e3a5f;
+            font-size: 1.15rem;
+            color: var(--morrison-navy);
             margin-bottom: 1.25rem;
             padding-bottom: 0.5rem;
-            border-bottom: 2px solid #e2e8f0;
+            border-bottom: 2px solid var(--morrison-border);
         }
 
         .form-grid {
@@ -64,7 +90,7 @@
             display: block;
             font-size: 0.85rem;
             font-weight: 600;
-            color: #4a5568;
+            color: var(--morrison-navy);
             margin-bottom: 0.35rem;
         }
 
@@ -72,8 +98,8 @@
         .form-group select {
             width: 100%;
             padding: 0.6rem 0.75rem;
-            border: 1.5px solid #cbd5e0;
-            border-radius: 8px;
+            border: 1.5px solid var(--morrison-border);
+            border-radius: 6px;
             font-size: 1rem;
             transition: border-color 0.2s;
         }
@@ -81,8 +107,8 @@
         .form-group input:focus,
         .form-group select:focus {
             outline: none;
-            border-color: #2d5986;
-            box-shadow: 0 0 0 3px rgba(45,89,134,0.15);
+            border-color: var(--morrison-gold);
+            box-shadow: 0 0 0 3px rgba(197,164,78,0.2);
         }
 
         .input-hint {
@@ -94,27 +120,28 @@
         .btn {
             display: inline-block;
             padding: 0.7rem 2rem;
-            background: linear-gradient(135deg, #1e3a5f, #2d5986);
-            color: white;
+            background: linear-gradient(135deg, var(--morrison-gold), var(--morrison-gold-light));
+            color: var(--morrison-navy);
             border: none;
-            border-radius: 8px;
+            border-radius: 6px;
             font-size: 1rem;
-            font-weight: 600;
+            font-weight: 700;
             cursor: pointer;
             transition: transform 0.15s, box-shadow 0.15s;
             margin-top: 1.25rem;
+            letter-spacing: 0.3px;
         }
 
         .btn:hover {
             transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(30,58,95,0.3);
+            box-shadow: 0 4px 12px rgba(197,164,78,0.4);
         }
 
         .btn:active { transform: translateY(0); }
 
         .btn-secondary {
             background: #e2e8f0;
-            color: #4a5568;
+            color: var(--morrison-text-light);
             margin-left: 0.75rem;
         }
 
@@ -131,19 +158,19 @@
         }
 
         .summary-item {
-            background: #f7fafc;
+            background: #f8f9fb;
             border-radius: 8px;
             padding: 1rem 1.25rem;
-            border-left: 4px solid #2d5986;
+            border-left: 4px solid var(--morrison-navy);
         }
 
         .summary-item.highlight {
-            border-left-color: #e53e3e;
-            background: #fff5f5;
+            border-left-color: var(--morrison-gold);
+            background: var(--morrison-gold-pale);
         }
 
         .summary-item .label {
-            font-size: 0.8rem;
+            font-size: 0.78rem;
             color: #718096;
             text-transform: uppercase;
             letter-spacing: 0.5px;
@@ -153,11 +180,11 @@
         .summary-item .value {
             font-size: 1.35rem;
             font-weight: 700;
-            color: #1e3a5f;
+            color: var(--morrison-navy);
             margin-top: 0.15rem;
         }
 
-        .summary-item.highlight .value { color: #e53e3e; }
+        .summary-item.highlight .value { color: var(--morrison-gold); }
 
         .table-wrapper {
             overflow-x: auto;
@@ -171,8 +198,8 @@
         }
 
         thead th {
-            background: #1e3a5f;
-            color: white;
+            background: var(--morrison-navy);
+            color: var(--morrison-gold-light);
             padding: 0.7rem 0.75rem;
             text-align: right;
             font-weight: 600;
@@ -183,58 +210,67 @@
             top: 0;
         }
 
-        thead th:first-child { text-align: center; border-radius: 8px 0 0 0; }
-        thead th:last-child { border-radius: 0 8px 0 0; }
+        thead th:first-child { text-align: center; border-radius: 6px 0 0 0; }
+        thead th:last-child { border-radius: 0 6px 0 0; }
 
         tbody td {
             padding: 0.55rem 0.75rem;
             text-align: right;
-            border-bottom: 1px solid #e2e8f0;
+            border-bottom: 1px solid #edf0f4;
         }
 
-        tbody td:first-child { text-align: center; font-weight: 600; color: #4a5568; }
+        tbody td:first-child { text-align: center; font-weight: 600; color: var(--morrison-text-light); }
 
-        tbody tr:hover { background: #f7fafc; }
+        tbody tr:hover { background: #f8f9fb; }
 
         tbody tr.year-separator td {
-            background: #edf2f7;
+            background: var(--morrison-gold-pale);
             font-weight: 700;
-            color: #1e3a5f;
-            border-bottom: 2px solid #cbd5e0;
+            color: var(--morrison-navy);
+            border-bottom: 2px solid var(--morrison-gold);
         }
 
         tbody tr.term-end td {
-            background: #fff5f5;
+            background: #fef3cd;
             font-weight: 700;
-            color: #e53e3e;
-            border-bottom: 3px solid #e53e3e;
+            color: #8a6d1b;
+            border-bottom: 3px solid var(--morrison-gold);
         }
 
         .hidden { display: none; }
 
         .payment-frequency-note {
-            background: #ebf8ff;
-            border-left: 4px solid #3182ce;
+            background: #f0f4fa;
+            border-left: 4px solid var(--morrison-navy-light);
             padding: 0.75rem 1rem;
-            border-radius: 0 8px 8px 0;
+            border-radius: 0 6px 6px 0;
             font-size: 0.9rem;
-            color: #2c5282;
+            color: var(--morrison-navy);
             margin-top: 1rem;
         }
 
         .print-btn {
-            background: #48bb78;
+            background: var(--morrison-navy);
+            color: var(--morrison-gold-light);
             margin-left: 0.75rem;
         }
 
         .print-btn:hover {
-            box-shadow: 0 4px 12px rgba(72,187,120,0.3);
+            box-shadow: 0 4px 12px rgba(10,31,60,0.3);
         }
 
         .error-msg {
-            color: #e53e3e;
+            color: #c53030;
             font-size: 0.85rem;
             margin-top: 0.25rem;
+        }
+
+        .morrison-divider {
+            width: 60px;
+            height: 3px;
+            background: var(--morrison-gold);
+            margin: 0.5rem auto 0;
+            border-radius: 2px;
         }
 
         @media print {
@@ -242,15 +278,17 @@
             .btn, .no-print { display: none !important; }
             .card { box-shadow: none; border: 1px solid #ccc; break-inside: avoid; }
             body { background: white; }
-            thead th { background: #333 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-            tbody tr.year-separator td { background: #eee !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-            tbody tr.term-end td { background: #ffe0e0 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            thead th { background: var(--morrison-navy) !important; color: var(--morrison-gold-light) !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            tbody tr.year-separator td { background: var(--morrison-gold-pale) !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            tbody tr.term-end td { background: #fef3cd !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            header { border-bottom-color: var(--morrison-gold) !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
         }
 
         @media (max-width: 600px) {
             .form-grid { grid-template-columns: 1fr; }
             .summary-grid { grid-template-columns: 1fr; }
-            header h1 { font-size: 1.3rem; }
+            header h1 { font-size: 1.25rem; }
+            .header-logo { font-size: 0.95rem; letter-spacing: 2px; }
             .card { padding: 1rem; }
         }
 
@@ -260,13 +298,22 @@
             color: #a0aec0;
             font-size: 0.8rem;
         }
+
+        footer a {
+            color: var(--morrison-gold);
+            text-decoration: none;
+        }
+
+        footer a:hover { text-decoration: underline; }
     </style>
 </head>
 <body>
 
 <header>
-    <h1>Condominium Corporation Loan Calculator</h1>
-    <p>Repayment Amortization Schedule Generator</p>
+    <div class="header-logo">Morrison Financial</div>
+    <h1>Condo Corporation Loan Calculator</h1>
+    <p>CondoCorp Term Financing&trade; &mdash; Repayment Amortization Schedule</p>
+    <div class="morrison-divider"></div>
 </header>
 
 <div class="container">
@@ -393,7 +440,7 @@
 </div>
 
 <footer>
-    Condominium Corporation Loan Amortization Calculator &mdash; For estimation purposes only. Consult your financial institution for exact figures.
+    <a href="https://morrisonfinancial.com">Morrison Financial</a> &mdash; CondoCorp Term Financing&trade; Calculator &mdash; For estimation purposes only. Consult your financial institution for exact figures.
 </footer>
 
 <script>
