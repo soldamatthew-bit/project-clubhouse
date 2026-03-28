@@ -421,6 +421,46 @@
             </div>
         </div>
 
+        <div class="card" id="unitFactorCard">
+            <h2>Unit Owner Payment Estimator</h2>
+            <p style="font-size:0.9rem; color: var(--morrison-text-light); margin-bottom:1rem;">
+                Enter your unit&rsquo;s proportionate share (unit factor) to estimate your monthly contribution toward the corporation&rsquo;s loan repayment.
+            </p>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="unitFactor">Unit Factor (%)</label>
+                    <input type="text" id="unitFactor" placeholder="e.g. 1.25" inputmode="decimal">
+                    <div class="input-hint">Your unit&rsquo;s proportionate share as shown on your condo declaration</div>
+                </div>
+                <div class="form-group" style="display:flex; align-items:flex-end;">
+                    <button class="btn" onclick="calculateUnitShare()" style="margin-top:0;">Estimate My Payment</button>
+                </div>
+            </div>
+            <div id="unitResults" class="hidden" style="margin-top:1.25rem;">
+                <div class="summary-grid">
+                    <div class="summary-item">
+                        <div class="label">Corp Monthly Payment</div>
+                        <div class="value" id="unitCorpPayment"></div>
+                    </div>
+                    <div class="summary-item highlight">
+                        <div class="label">Your Est. Monthly Payment</div>
+                        <div class="value" id="unitMonthlyPayment"></div>
+                    </div>
+                    <div class="summary-item">
+                        <div class="label">Your Est. Total Over Term</div>
+                        <div class="value" id="unitTotalPayment"></div>
+                    </div>
+                    <div class="summary-item">
+                        <div class="label">Your Unit Factor</div>
+                        <div class="value" id="unitFactorDisplay"></div>
+                    </div>
+                </div>
+                <div class="disclaimer" style="margin-top:0.75rem;">
+                    <strong>Important:</strong> The unit payment estimate above is calculated by applying your unit factor (proportionate share) to the corporation&rsquo;s total monthly loan payment. This is an approximation only. Your actual contribution may differ based on your condominium corporation&rsquo;s declaration, by-laws, board resolutions, and how your corporation allocates common expenses. Unit factors are determined by the condominium declaration and may not directly correspond to how your board allocates special assessment or loan repayment charges. Always confirm your specific payment obligation with your condominium corporation&rsquo;s board or property manager.
+                </div>
+            </div>
+        </div>
+
         <div class="card">
             <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.5rem;">
                 <h2 style="border:none; margin:0; padding:0;">Amortization Schedule (Term Period)</h2>
@@ -529,6 +569,11 @@
             payment = principal * ratePerPeriod / (1 - Math.pow(1 + ratePerPeriod, -totalAmortPeriods));
         }
         payment = Math.round(payment * 100) / 100;
+        lastPayment = payment;
+        lastTermPeriods = totalTermPeriods;
+
+        // Reset unit factor results when recalculating
+        document.getElementById('unitResults').classList.add('hidden');
 
         // Build schedule for the term period
         scheduleData = [];
@@ -646,9 +691,13 @@
         document.getElementById('annualRate').value = '';
         document.getElementById('loanTerm').value = '3';
         document.getElementById('amortPeriod').value = '15';
+        document.getElementById('unitFactor').value = '';
+        document.getElementById('unitResults').classList.add('hidden');
         document.getElementById('formError').classList.add('hidden');
         document.getElementById('results').classList.add('hidden');
         scheduleData = [];
+        lastPayment = 0;
+        lastTermPeriods = 0;
 
         const today = new Date();
         const next = new Date(today.getFullYear(), today.getMonth() + 1, 1);
@@ -671,6 +720,17 @@
             csv += `${row.number},${formatDate(row.date)},${row.payment.toFixed(2)},${row.principal.toFixed(2)},${row.interest.toFixed(2)},${row.balance.toFixed(2)}\n`;
         }
 
+        // Include unit factor estimate if calculated
+        const unitResultsEl = document.getElementById('unitResults');
+        if (!unitResultsEl.classList.contains('hidden')) {
+            csv += '\nUNIT OWNER PAYMENT ESTIMATE\n';
+            csv += 'Unit Factor,' + document.getElementById('unitFactorDisplay').textContent + '\n';
+            csv += 'Corp Monthly Payment,' + document.getElementById('unitCorpPayment').textContent + '\n';
+            csv += 'Est. Unit Monthly Payment,' + document.getElementById('unitMonthlyPayment').textContent + '\n';
+            csv += 'Est. Unit Total Over Term,' + document.getElementById('unitTotalPayment').textContent + '\n';
+            csv += '"IMPORTANT: Unit payment estimate is an approximation based on the unit factor applied to the corporation total payment. Actual charges may differ based on your condo declaration, by-laws, and board resolutions. Confirm with your board or property manager."\n';
+        }
+
         csv += '\nDISCLAIMER\n';
         csv += '"This amortization schedule is provided by Morrison Financial for illustrative and estimation purposes only. Actual loan terms, interest rates, payment amounts, and conditions may vary. This does not constitute a loan offer, commitment, or financial advice. All financing is subject to credit approval and Morrison Financial lending criteria."\n';
 
@@ -681,6 +741,29 @@
         a.download = 'amortization-schedule.csv';
         a.click();
         URL.revokeObjectURL(url);
+    }
+
+    let lastPayment = 0;
+    let lastTermPeriods = 0;
+
+    function calculateUnitShare() {
+        const factorStr = document.getElementById('unitFactor').value;
+        const factor = parseFloat(factorStr.replace(/[^0-9.\-]/g, ''));
+
+        if (isNaN(factor) || factor <= 0 || factor > 100) {
+            alert('Please enter a valid unit factor between 0.01% and 100%.');
+            return;
+        }
+
+        const corpPayment = lastPayment;
+        const unitMonthly = Math.round(corpPayment * (factor / 100) * 100) / 100;
+        const unitTotal = Math.round(unitMonthly * lastTermPeriods * 100) / 100;
+
+        document.getElementById('unitCorpPayment').textContent = formatMoney(corpPayment);
+        document.getElementById('unitMonthlyPayment').textContent = formatMoney(unitMonthly);
+        document.getElementById('unitTotalPayment').textContent = formatMoney(unitTotal);
+        document.getElementById('unitFactorDisplay').textContent = factor.toFixed(4) + '%';
+        document.getElementById('unitResults').classList.remove('hidden');
     }
 
     // Auto-format loan amount with commas as user types
